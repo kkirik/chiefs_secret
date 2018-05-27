@@ -1,0 +1,26 @@
+version: "3.4"
+
+services:
+  frontend: &frontend
+    build:
+      context: ./frontend
+      target: development
+    command: npm run dev
+    env_file:
+      - .env
+    ports: 
+      - "3000:3000"
+    # volumes:
+    #   - node_modules:/opt/secrets/node_modules
+    #   - ./frontend:/opt/secrets
+      
+  backend: &backend
+    build:
+      context: ./backend
+      target: development
+    command: node server.js
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+
