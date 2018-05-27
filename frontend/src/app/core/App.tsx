@@ -5,8 +5,7 @@ class App extends React.Component {
   render() {
     return (
       <div className='App'>
-        <Button />
-        <Button />
+        <Button>Click</Button>
       </div>
     );
   }
