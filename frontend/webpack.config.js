@@ -2,42 +2,19 @@ const path = require('path');
 const webpack = require('webpack');
 const glob = require('glob');
 
-
 // Подключаемые плагины
 const CompressionPlugin = require('compression-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');;
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const __DEV__ = process.env.NODE_ENV !== 'production';
+const DEBUG = JSON.stringify(process.env.DEBUG === 'true');
 const root = process.cwd();
-const OAUTH_DEBUG = JSON.stringify(process.env.OAUTH_DEBUG || __DEV__ || false);
-const babelrc = {
-  presets: [
-    "react",
-    [
-      "env",
-      {
-        debug: true,
-        targets: {
-          browsers: __DEV__
-            ? ["last 1 Chrome versions"]
-            : [
-              "IE 11",
-              "edge >= 14",
-              "Firefox >= 52",
-              "Chrome >= 55"
-            ]
-        }
-      }
-    ]
-  ],
-  plugins: [
-    ["emotion", { autoLabel: true }],
-  ]
-}
 
+console.log(`process.env.NODE_ENV = ${JSON.stringify(process.env.NODE_ENV)}`);
+console.log(`DEBUG = ${DEBUG}`);
 
 /** @type {webpack.Configuration} */
 const config = {
@@ -45,8 +22,8 @@ const config = {
   bail: !__DEV__,
 
   entry: {
-    app: path.join(root, 'src/init.tsx'),
-    sprites: glob.sync('src/assets/icons/*.svg'),
+    app: path.join(root, 'app/init.tsx'),
+    // sprites: glob.sync('assets/icon/*.svg'),
   },
 
   output: {
@@ -58,42 +35,41 @@ const config = {
 
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json', '.less'],
-    modules: [root, path.resolve(root, 'src'), 'node_modules'],
+    modules: [root, path.resolve(root, 'app'), 'node_modules'],
   },
 
   plugins: [
-    new HtmlWebpackPlugin({ title: 'Schiefs secret' }),
+    new HtmlWebpackPlugin({ title: 'Сhiefs secret' }),
     new MiniCssExtractPlugin(),
     new webpack.ContextReplacementPlugin(/node_modules\/moment\/locale/, /ru/),
-    new webpack.DefinePlugin({ OAUTH_DEBUG }),
+    new webpack.DefinePlugin({ DEBUG }),
   ],
 
   module: {
     strictExportPresence: true,
     rules: [
       {
-        test: /\.(tsx?|jsx?)$/,
+        test: /\.tsx?$/,
         include: __DEV__
-          ? [path.resolve(__dirname, 'src')]
-          : [path.resolve(__dirname, 'src'), path.resolve(__dirname, 'node_modules')],
+          ? [path.resolve(__dirname, 'app')]
+          : [path.resolve(__dirname, 'app'), path.resolve(__dirname, 'node_modules')],
         use: [
           {
             loader: 'babel-loader',
-            options: babelrc,
           },
           'ts-loader?transpileOnly=true',
         ],
       },
       {
         test: /\.(jpe?g|png|gif|svg|eot|ttf|woff2?)$/,
-        exclude: path.resolve(__dirname, 'src/assets/icons'),
+        // exclude: path.resolve(__dirname, 'src/assets/icons'),
         use: {
           loader: 'url-loader',
           options: {
             limit: 8192,
-            name: `assets/media/[name]${__DEV__ ? '' : '-[hash:8]'}.[ext]`
-          }
-        }
+            name: `assets/media/[name]${__DEV__ ? '' : '-[hash:8]'}.[ext]`,
+          },
+        },
       },
       {
         test: /\.svg$/,
@@ -104,16 +80,16 @@ const config = {
         test: /\.less$/,
         use: [
           __DEV__ ? 'style-loader' : MiniCssExtractPlugin.loader,
-          `css-loader?minimize=${!__DEV__}`,
-          'less-loader',
-        ]
+          `css-loader`,
+          {
+            loader: 'less-loader',
+            options: { javascriptEnabled: true },
+          },
+        ],
       },
       {
         test: /\.(css)$/,
-        use: [
-          __DEV__ ? 'style-loader' : MiniCssExtractPlugin.loader,
-          'css-loader',
-        ],
+        use: [__DEV__ ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader'],
       },
     ],
   },
@@ -122,13 +98,13 @@ const config = {
       cacheGroups: {
         commons: {
           test: /[\\/]node_modules[\\/].*\.(jsx?|tsx?)/,
-          name: "vendor",
-          chunks: "all",
+          name: 'vendor',
+          chunks: 'all',
         },
         styles: {
           test: /\.(less|css)$/,
-          name: "styles",
-          chunks: "all",
+          name: 'styles',
+          chunks: 'all',
         },
       },
     },
@@ -148,7 +124,7 @@ if (__DEV__) {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
+      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
     },
     stats: {
       assets: true,
@@ -168,12 +144,11 @@ if (__DEV__) {
       warnings: true,
     },
     watchOptions: {
-      ignored: /node_modules/
+      ignored: /node_modules/,
     },
   };
   config.output.publicPath = `/`;
   config.plugins.push(new ForkTsCheckerWebpackPlugin({ tslint: './tslint.json' }));
-  // Отвечает за генерацию source maps. Без них сборка/пересборка идет значительно быстрее
   config.devtool = false;
 } else {
   config.plugins.push(
