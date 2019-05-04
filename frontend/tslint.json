@@ -1,27 +1,55 @@
 {
   "defaultSeverity": "error",
-  "extends": [
-      "tslint:latest"
-  ],
+  "extends": ["tslint:latest"],
   "jsRules": {},
   "rules": {
     "curly": [true, "ignore-same-line"],
     "indent": [true, "spaces", 2],
-    "object-literal-sort-keys": false,
-    "ordered-imports": [true, {
-      "import-sources-order": "any",
-      "named-imports-order": "case-insensitive"
-    }],
-    "max-line-length": [true, 150],
+    "max-line-length": [true, 100],
     "member-access": [false],
     "no-console": [false],
+    "no-implicit-dependencies": false,
     "no-irregular-whitespace": true,
     "no-string-literal": false,
     "no-submodule-imports": false,
-    "no-implicit-dependencies": false,
-    "no-unused-variable": [true, {"ignore-pattern": "^_"}],
-    "quotemark": [true, "single"],
-    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"]
+    "object-literal-key-quotes": [true, "as-needed"],
+    "object-literal-sort-keys": false,
+    "ordered-imports": [
+      true,
+      {
+        "import-sources-order": "any",
+        "named-imports-order": "case-insensitive"
+      }
+    ],
+    "quotemark": [true, "single", "jsx-double"],
+    "semicolon": [true, "always", "strict-bound-class-methods"],
+    "trailing-comma": {
+      "options": {
+        "esSpecCompliant": true,
+        "multiline": "always",
+        "singleline": "never"
+      }
+    },
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-leading-underscore",
+      "allow-pascal-case"
+    ],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-module",
+      "check-separator",
+      "check-rest-spread",
+      "check-type",
+      "check-typecast",
+      "check-type-operator",
+      "check-preblock"
+    ]
   },
   "rulesDirectory": []
 }

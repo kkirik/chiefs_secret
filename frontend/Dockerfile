@@ -1,10 +1,11 @@
-FROM node:9.11-alpine AS development
-RUN apk --update add git
-RUN npm i -g npm@6.0.1
+FROM node:10.15-alpine AS development
 
-WORKDIR /opt/secrets
+RUN npm i -g npm@latest
+RUN npm i -g yarn@latest
 
-COPY package.json package-lock.json /opt/secrets/
+WORKDIR /opt/secrets-frontend
 
-RUN npm i
+COPY package.json yarn.lock /opt/secrets-frontend/
+
+RUN yarn
 COPY . /opt/secrets

@@ -1,26 +1,29 @@
-version: "3.4"
+version: '3.4'
 
 services:
-  frontend: &frontend
+  frontend:
     build:
       context: ./frontend
       target: development
-    command: npm run dev
+    command: yarn dev
     env_file:
       - .env
-    ports: 
-      - "3000:3000"
-    # volumes:
-    #   - node_modules:/opt/secrets/node_modules
-    #   - ./frontend:/opt/secrets
-      
+      - .env.local
+    ports:
+      - '3000:3000'
+    volumes:
+      - node_modules:/opt/secrets-frontend/node_modules
+      - ./frontend:/opt/secrets-frontend:delegated
+
   backend: &backend
     build:
       context: ./backend
       target: development
-    command: node server.js
+    command: nodemon server.js
     env_file:
       - .env
     ports:
-      - "8080:8080"
+      - '8080:8080'
 
+volumes:
+  node_modules:
