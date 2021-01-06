@@ -2,6 +2,7 @@
   "name": "chiefs_secret",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "webpack-dev-server",
     "lint": "tsc --noEmit --project ./tsconfig.json && tslint --project .",
